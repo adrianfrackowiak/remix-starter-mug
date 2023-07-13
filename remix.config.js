@@ -1,7 +1,7 @@
 /** @type {import('@remix-run/dev').AppConfig} */
 module.exports = {
   ignoredRouteFiles: ["**/.*"],
-  serverDependenciesToBundle: ['swiper', 'swiper/react', 'swiper/css'],
+  serverDependenciesToBundle: ['swiper', 'swiper/react', 'swiper/css', 'styled-components'],
   server: process.env.NODE_ENV === "development" ? undefined : "./server.ts",
   serverBuildPath: "api/index.js",
   serverModuleFormat: "cjs",

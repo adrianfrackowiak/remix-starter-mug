@@ -50,13 +50,13 @@ export default function App() {
 
   return (
     <StrictMode>
-      <GlobalStyle />
       <html lang={locale} dir={i18n.dir()}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        <GlobalStyle />
       </head>
       <body>
         <Outlet />
