@@ -39,14 +39,12 @@ export default async function handleRequest(
     });
 
   let markup = renderToString(
-    sheet.collectStyles(
-      <I18nextProvider i18n={instance}>
-        <RemixServer
-          context={remixContext}
-          url={request.url}
-        />
-      </I18nextProvider>
-    )
+    <I18nextProvider i18n={instance}>
+      <RemixServer
+        context={remixContext}
+        url={request.url}
+      />
+    </I18nextProvider>
   );
   const styles = sheet.getStyleTags();
   markup = markup.replace("__STYLES__", styles);
@@ -90,5 +88,4 @@ export default async function handleRequest(
 
     setTimeout(abort, ABORT_DELAY);
   });
-
 }
