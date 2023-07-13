@@ -1,6 +1,7 @@
 import type { EntryContext } from "@remix-run/node";
+import { PassThrough } from "stream";
 import { RemixServer } from "@remix-run/react";
-import { renderToString } from "react-dom/server";
+import { renderToPipeableStream, renderToString } from "react-dom/server";
 import { ServerStyleSheet } from "styled-components";
 import { Response } from "@remix-run/node";
 import { createInstance } from "i18next";
@@ -9,6 +10,9 @@ import Backend from "i18next-fs-backend";
 import { resolve } from "node:path";
 import i18next from "./translations/i18next.server";
 import i18n from "./translations/i18n";
+import isbot from "isbot";
+
+const ABORT_DELAY = 5000;
 
 export default async function handleRequest(
   request: Request,
@@ -17,7 +21,9 @@ export default async function handleRequest(
   remixContext: EntryContext,
 ) {
   const sheet = new ServerStyleSheet();
-
+  let callbackName = isbot(request.headers.get("user-agent"))
+    ? "onAllReady"
+    : "onShellReady";
   let instance = createInstance();
   let lng = await i18next.getLocale(request);
   let ns = i18next.getRouteNamespaces(remixContext);
@@ -45,10 +51,44 @@ export default async function handleRequest(
   const styles = sheet.getStyleTags();
   markup = markup.replace("__STYLES__", styles);
 
-  responseHeaders.set("Content-Type", "text/html");
+  return new Promise((resolve, reject) => {
+    let didError = false;
 
-  return new Response("<!DOCTYPE html>" + markup, {
-    status: responseStatusCode,
-    headers: responseHeaders,
+    let { pipe, abort } = renderToPipeableStream(
+      <I18nextProvider i18n={instance}>
+        <RemixServer context={remixContext} url={request.url} />
+      </I18nextProvider>,
+      {
+        [callbackName]: () => {
+          const body = new PassThrough();
+
+          responseHeaders.set("Content-Type", "text/html");
+
+          resolve(
+            new Response(body, {
+              headers: responseHeaders,
+              status: didError ? 500 : responseStatusCode,
+            })
+          );
+
+          body.write(
+            `<!DOCTYPE html><html><head><!--start head-->${markup}<!--end head--></head><body><div id="root">`
+          );
+          pipe(body);
+          body.write(`</div></body></html>`);
+        },
+        onShellError(err: unknown) {
+          reject(err);
+        },
+        onError(error: unknown) {
+          didError = true;
+
+          console.error(error);
+        },
+      }
+    );
+
+    setTimeout(abort, ABORT_DELAY);
   });
+
 }
