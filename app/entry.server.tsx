@@ -1,15 +1,16 @@
-import { PassThrough } from "stream";
 import type { EntryContext } from "@remix-run/node";
-import { Response } from "@remix-run/node";
+import { PassThrough } from "stream";
 import { RemixServer } from "@remix-run/react";
-import isbot from "isbot";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToPipeableStream, renderToString } from "react-dom/server";
+import { ServerStyleSheet } from "styled-components";
+import { Response } from "@remix-run/node";
 import { createInstance } from "i18next";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import Backend from "i18next-fs-backend";
 import { resolve } from "node:path";
 import i18next from "./translations/i18next.server";
 import i18n from "./translations/i18n";
+import isbot from "isbot";
 
 const ABORT_DELAY = 5000;
 
@@ -19,10 +20,10 @@ export default async function handleRequest(
   responseHeaders: Headers,
   remixContext: EntryContext
 ) {
+  const sheet = new ServerStyleSheet();
   let callbackName = isbot(request.headers.get("user-agent"))
     ? "onAllReady"
     : "onShellReady";
-
   let instance = createInstance();
   let lng = await i18next.getLocale(request);
   let ns = i18next.getRouteNamespaces(remixContext);
@@ -37,6 +38,19 @@ export default async function handleRequest(
       backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") },
     });
 
+  let markup = '';
+  let styles = '';
+
+  if (callbackName === "onAllReady") {
+    const appMarkup = sheet.collectStyles(
+      <I18nextProvider i18n={instance}>
+        <RemixServer context={remixContext} url={request.url} />
+      </I18nextProvider>
+    );
+    markup = renderToString(appMarkup);
+    styles = sheet.getStyleTags();
+  }
+
   return new Promise((resolve, reject) => {
     let didError = false;
 
@@ -46,7 +60,7 @@ export default async function handleRequest(
       </I18nextProvider>,
       {
         [callbackName]: () => {
-          let body = new PassThrough();
+          const body = new PassThrough();
 
           responseHeaders.set("Content-Type", "text/html");
 
@@ -57,10 +71,18 @@ export default async function handleRequest(
             })
           );
 
+          if (callbackName === "onAllReady") {
+            body.write("<!DOCTYPE html><html><head>");
+            body.write(styles);
+            body.write("</head><body>");
+            body.write(markup);
+            body.write("</body></html>");
+          }
+
           pipe(body);
         },
-        onShellError(error: unknown) {
-          reject(error);
+        onShellError(err: unknown) {
+          reject(err);
         },
         onError(error: unknown) {
           didError = true;
