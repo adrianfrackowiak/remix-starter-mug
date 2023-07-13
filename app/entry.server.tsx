@@ -39,15 +39,17 @@ export default async function handleRequest(
     });
 
   let markup = '';
+  let styles = '';
+
   if (callbackName === "onAllReady") {
-    markup = renderToString(
+    const appMarkup = sheet.collectStyles(
       <I18nextProvider i18n={instance}>
         <RemixServer context={remixContext} url={request.url} />
       </I18nextProvider>
     );
+    markup = renderToString(appMarkup);
+    styles = sheet.getStyleTags();
   }
-
-  let styles = sheet.getStyleTags();
 
   return new Promise((resolve, reject) => {
     let didError = false;
