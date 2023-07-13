@@ -39,8 +39,6 @@ export default async function handleRequest(
     });
 
   let markup = '';
-  let styles = sheet.getStyleTags();
-
   if (callbackName === "onAllReady") {
     markup = renderToString(
       <I18nextProvider i18n={instance}>
@@ -48,6 +46,8 @@ export default async function handleRequest(
       </I18nextProvider>
     );
   }
+
+  let styles = sheet.getStyleTags();
 
   return new Promise((resolve, reject) => {
     let didError = false;

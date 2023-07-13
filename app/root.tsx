@@ -6,6 +6,7 @@ import {
   LiveReload,
   Meta,
   Outlet,
+  RemixBrowser,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -14,6 +15,7 @@ import { GlobalStyle } from "./theme";
 import i18next from "./translations/i18next.server";
 import { useTranslation } from "react-i18next";
 import { StrictMode, useEffect } from "react";
+import { ServerStyleSheet } from "styled-components";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -48,6 +50,10 @@ export default function App() {
   const { i18n } = useTranslation();
   useChangeLanguage(locale);
 
+  const sheet = new ServerStyleSheet();
+  sheet.collectStyles(<RemixBrowser />);
+  const styles = sheet.getStyleTags();
+
   return (
     <StrictMode>
       <html lang={locale} dir={i18n.dir()}>
@@ -56,9 +62,10 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <GlobalStyle />
+        <style dangerouslySetInnerHTML={{ __html: styles }} />
       </head>
       <body>
+        <GlobalStyle />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
