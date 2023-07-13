@@ -18,7 +18,7 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext,
+  remixContext: EntryContext
 ) {
   const sheet = new ServerStyleSheet();
   let callbackName = isbot(request.headers.get("user-agent"))
@@ -38,16 +38,17 @@ export default async function handleRequest(
       backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") },
     });
 
-  let markup = renderToString(
-    <I18nextProvider i18n={instance}>
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-      />
-    </I18nextProvider>
-  );
-  const styles = sheet.getStyleTags();
-  markup = markup.replace("__STYLES__", styles);
+  let markup = '';
+  let styles = '';
+
+  if (callbackName === "onAllReady") {
+    markup = renderToString(
+      <I18nextProvider i18n={instance}>
+        <RemixServer context={remixContext} url={request.url} />
+      </I18nextProvider>
+    );
+    styles = sheet.getStyleTags();
+  }
 
   return new Promise((resolve, reject) => {
     let didError = false;
@@ -69,11 +70,15 @@ export default async function handleRequest(
             })
           );
 
-          body.write(
-            `<!DOCTYPE html><html><head><!--start head-->${markup}<!--end head--></head><body><div id="root">`
-          );
+          if (callbackName === "onAllReady") {
+            body.write("<!DOCTYPE html><html><head>");
+            body.write(styles);
+            body.write("</head><body>");
+            body.write(markup);
+            body.write("</body></html>");
+          }
+
           pipe(body);
-          body.write(`</div></body></html>`);
         },
         onShellError(err: unknown) {
           reject(err);
