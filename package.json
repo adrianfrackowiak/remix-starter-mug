@@ -4,7 +4,8 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "postinstall": "remix-esbuild-override"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^1.18.1",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
     "eslint": "^8.38.0",
+    "remix-esbuild-override": "^3.1.0",
     "typescript": "^5.0.4"
   },
   "engines": {

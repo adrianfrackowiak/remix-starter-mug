@@ -1,0 +1,1 @@
+export type { ProductSettings } from './product.interface';
