@@ -5,7 +5,7 @@ module.exports = {
   server: process.env.NODE_ENV === "development" ? undefined : "./server.ts",
   serverBuildPath: "api/index.js",
   serverModuleFormat: "cjs",
-  serverEntry: "./entry.server.tsx",
+  serverEntry: "./entry.server",
   serverOutputPath: "./dist/server.js",
   future: {
     v2_dev: true,
