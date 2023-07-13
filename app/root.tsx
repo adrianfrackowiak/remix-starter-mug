@@ -13,7 +13,7 @@ import {
 import { GlobalStyle } from "./theme";
 import i18next from "./translations/i18next.server";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { StrictMode, useEffect } from "react";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -49,21 +49,22 @@ export default function App() {
   useChangeLanguage(locale);
 
   return (
-    <html lang={locale} dir={i18n.dir()}>
+    <StrictMode>
+      <GlobalStyle />
+      <html lang={locale} dir={i18n.dir()}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <body>
-        <GlobalStyle />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
+    </StrictMode>
   );
 }

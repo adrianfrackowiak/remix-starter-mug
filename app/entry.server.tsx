@@ -39,7 +39,7 @@ export default async function handleRequest(
     });
 
   let markup = '';
-  let styles = '';
+  let styles = sheet.getStyleTags();
 
   if (callbackName === "onAllReady") {
     markup = renderToString(
@@ -47,7 +47,6 @@ export default async function handleRequest(
         <RemixServer context={remixContext} url={request.url} />
       </I18nextProvider>
     );
-    styles = sheet.getStyleTags();
   }
 
   return new Promise((resolve, reject) => {
