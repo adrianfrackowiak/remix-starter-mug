@@ -53,6 +53,7 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
+        <link rel="manifest" href="/route-to-your-manifest-file" />
         <Links />
         {typeof document === "undefined" ? "__STYLES__" : null}
       </head>

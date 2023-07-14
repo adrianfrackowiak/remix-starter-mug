@@ -6,6 +6,21 @@ import { getInitialNamespaces } from "remix-i18next";
 import i18n from "./translations/i18n";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
+import type { LoadServiceWorkerOptions} from '@remix-pwa/sw';
+import { loadServiceWorker } from '@remix-pwa/sw';
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    // we will register it after the page complete the load
+    navigator.serviceWorker.register("/sw.js");
+  });
+}
+
+const options: LoadServiceWorkerOptions = {
+  serviceWorkerUrl: '/entry.worker.ts',
+};
+loadServiceWorker(options);
+
 
 i18next
   .use(initReactI18next)

@@ -1,0 +1,1 @@
+self.addEventListener("install",e=>{console.log("Service worker installed"),e.waitUntil(self.skipWaiting())});self.addEventListener("activate",e=>{console.log("Service worker activated"),e.waitUntil(self.clients.claim())});self.addEventListener("message",e=>{console.log("Service worker received message",e.data)});
