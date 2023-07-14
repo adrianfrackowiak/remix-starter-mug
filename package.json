@@ -4,8 +4,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "typecheck": "tsc",
-    "postinstall": "remix-esbuild-override"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^1.18.1",
@@ -13,7 +12,6 @@
     "@remix-run/react": "^1.18.1",
     "@remix-run/vercel": "^1.18.1",
     "@vercel/node": "^2.10.3",
-    "babel-plugin-styled-components": "^2.1.4",
     "i18next": "^23.2.11",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-fs-backend": "^2.1.5",
@@ -34,7 +32,6 @@
     "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
     "eslint": "^8.38.0",
-    "remix-esbuild-override": "^3.1.0",
     "typescript": "^5.0.4"
   },
   "engines": {
