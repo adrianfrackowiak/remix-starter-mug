@@ -42,7 +42,6 @@ export function useChangeLanguage(locale: string) {
   }, [locale, i18n]);
 }
 
-
 export default function App() {
   const { locale } = useLoaderData<typeof loader>();
   const { i18n } = useTranslation();
