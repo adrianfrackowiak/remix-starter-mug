@@ -1,6 +1,5 @@
 import { cssBundleHref } from "@remix-run/css-bundle";
-import { json } from "@remix-run/node";
-import type { LoaderArgs, LinksFunction } from "@remix-run/node";
+import { json, type LinksFunction, type LoaderArgs } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -11,9 +10,9 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { GlobalStyle } from "./theme";
-import i18next from "./translations/i18next.server";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import i18next from "./translations/i18next.server";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -55,6 +54,7 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        {typeof document === "undefined" ? "__STYLES__" : null}
       </head>
       <body>
         <GlobalStyle />
