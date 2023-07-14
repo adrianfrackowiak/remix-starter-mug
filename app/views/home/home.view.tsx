@@ -19,7 +19,7 @@ export const HomeView: React.FC = (): JSX.Element => {
         <Swiper style={{ height: '100%' }} slidesPerView={1}>
           {[1,2,3,4,5].map((index: number): JSX.Element => (
             <SwiperSlide key={index}>
-              <img src={`./assets/bg-${index}.jpg`} alt={`bg-${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+              <img src={`./assets/bg-${index}.jpg`} alt={`bg-${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </SwiperSlide>
           ))}
         </Swiper>

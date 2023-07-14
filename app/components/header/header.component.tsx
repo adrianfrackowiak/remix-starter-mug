@@ -5,7 +5,7 @@ import { Link } from "@remix-run/react";
 export const Header: React.FC = (): JSX.Element => {
   return (
     <Container>
-      <Link to='/'>Header - Remix Nested Component</Link>
+      <Link to='/'>Header</Link>
     </Container>
   );
 };
